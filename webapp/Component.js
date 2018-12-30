@@ -123,6 +123,9 @@ sap.ui.define([
 			var chartDataModel = new sap.ui.model.json.JSONModel([]);
 			this.setModel(chartDataModel, "chartData");
 			
+			var manualVerifyDocsModel = new sap.ui.model.json.JSONModel([]);
+			this.setModel(manualVerifyDocsModel, "ManualVerifyDocuments");
+			
 			//var completeRecordsModel = new sap.ui.model.json.JSONModel([]);
 			//this.setModel(chartDataModel, "CompleteRecords");
 			
@@ -136,7 +139,7 @@ sap.ui.define([
 					oController.getView().byId(ids[0]).setBusy(true);	
 				}
 				
-				$.ajax("http://localhost:8090/OcrRestSpring/errorData/", {
+				/*$.ajax("https://103.73.151.249:8080/OcrRestSpring/errorData/", {
 					success: function(data) {
 						console.log(data);
 						var nonSapErrorDataModel = oComponent.getModel("NonSapErrorData");
@@ -148,6 +151,52 @@ sap.ui.define([
 						}
 						nonSapErrorDataModel.setData(data);
 						nonSapErrorDataModel.refresh(true);
+						for(var i = 0; i < ids.length; i++) {
+							oController.getView().byId(ids[0]).setBusy(false);	
+						}
+						
+						var chartItem = {
+							Status: "Scanning Errors",
+							Count: data.length
+						};
+						
+						var chartDataModel = oComponent.getModel("chartData");
+						var chartData = chartDataModel.getData();
+						var isExist = false;
+						for(var i = 0; i < chartData.length; i++) {
+							if(chartData[i].Status === "Scanning Errors") {
+								isExist = true;
+								chartData[i].Count = data.length;
+								break;
+							}
+						}
+						
+						if(!isExist) {
+							chartData.push(chartItem);
+						}
+						console.log(JSON.stringify(chartData));
+						chartDataModel.refresh(true);
+						
+						var oVizFrame = oController.getView().byId("idVizFrame");
+			            var dataModel = oVizFrame.getModel();
+			            dataModel.setData({
+			            	chart: chartDataModel.getData()
+			            });
+			            dataModel.refresh(true);
+					},
+					error: function(err) {
+						console.log(err);
+						for(var i = 0; i < ids.length; i++) {
+							oController.getView().byId(ids[0]).setBusy(false);	
+						}
+			    	}
+			   });*/
+			   $.ajax("/ocrclient/Documents/filter?role=20", {
+					success: function(data) {
+						var manualVerifyDocsModel = oComponent.getModel("ManualVerifyDocuments");
+						manualVerifyDocsModel.setData(data);
+						manualVerifyDocsModel.refresh(true);
+						//console.log(data);
 						for(var i = 0; i < ids.length; i++) {
 							oController.getView().byId(ids[0]).setBusy(false);	
 						}

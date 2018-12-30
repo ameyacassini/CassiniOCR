@@ -23,10 +23,28 @@
       "path": "/sap/opu/odata",
       "target": {
         "type": "destination",
-        "name": "HANAS4",
+        "name": "Cassini",
         "entryPath": "/sap/opu/odata"
       },
-      "description": "CAANN"
+      "description": ""
+    },
+    {
+      "path": "/ocrclient",
+      "target": {
+        "type": "destination",
+        "name": "ocr_client_api",
+        "entryPath": "/"
+      },
+      "description": "OCR Client API"
+    },
+    {
+      "path": "/ocrspring",
+      "target": {
+        "type": "destination",
+        "name": "ocr_rest_spring",
+        "entryPath": "/"
+      },
+      "description": "OCR Spring API"
     }
   ],
   "sendWelcomeFileRedirect": true

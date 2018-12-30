@@ -1,11 +1,11 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
 	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, MessageBox, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ReadyToPost", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ReadyToPost", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
@@ -13,9 +13,9 @@ sap.ui.define([
 		},
 		onSelectDocument: function(oEvent) {
 			try {
-				var row = oEvent.getSource().getParent();
-				var sPath = row.getBindingContext('FiReviewRecords').getPath();
-				var selectedRecord = row.getBindingContext('FiReviewRecords').getModel().getProperty(row.getBindingContext('FiReviewRecords').getPath());
+				//var row = oEvent.getSource().getParent();
+				//var sPath = row.getBindingContext('FiReviewRecords').getPath();
+				//var selectedRecord = row.getBindingContext('FiReviewRecords').getModel().getProperty(row.getBindingContext('FiReviewRecords').getPath());
 				
 				
 				var recordId = oEvent.getSource().getProperty('text');
@@ -25,7 +25,7 @@ sap.ui.define([
 				});
 				
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		
@@ -34,7 +34,7 @@ sap.ui.define([
 				var source = oEvent.getSource();
 				
 				var row = source.getParent();
-				var sPath = row.getBindingContext('FiReviewRecords').getPath();
+				//var sPath = row.getBindingContext('FiReviewRecords').getPath();
 				var selectedRecord = row.getBindingContext('FiReviewRecords').getModel().getProperty(row.getBindingContext('FiReviewRecords').getPath());
 				
 				
@@ -43,9 +43,8 @@ sap.ui.define([
 				var reviewedData = JSON.parse(JSON.stringify(selectedRecord));
 				
 				
-				$.ajax("http://localhost:8090/OcrRestSpring/getTaxRate/"+ reviewedData.VendorCountry + "/" + reviewedData.Companycode + "/", {
+				$.ajax("/ocrspring/getTaxRate/"+ reviewedData.VendorCountry + "/" + reviewedData.Companycode + "/", {
 					success: function(data) {
-						console.log(data);
 						//recordlModel.getData().Taxcode = data.taxCode;
 						//recordlModel.getData().Taxrate = data.taxRate;
 						var tax = (parseFloat(reviewedData.Netvalue) * parseFloat(data.taxRate)) / 100;
@@ -131,16 +130,16 @@ sap.ui.define([
 								);
 							},
 							error: function(oError) {
-								console.log(oError);
+								MessageBox.error(oError);
 							}
 						});
 					},
 					error: function(err) {
-						console.log(err);
+						MessageBox.error(err);
 			    	}
 			   });	
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});

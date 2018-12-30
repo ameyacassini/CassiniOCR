@@ -1,32 +1,22 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
+	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ValidationErrors", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ValidationErrors", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
 			oComponent = this.getOwnerComponent();
-			
-			/*var oModel = this.getOwnerComponent().getModel();
-			var postData = oModel.getData().PostData;
-			var scanningErrorData = postData.filter(function(data) {
-			    return data.status === 0;
-			});
-			
-			var oScanningErrorModel = new sap.ui.model.json.JSONModel({
-				PostData: scanningErrorData
-			});
-			this.getOwnerComponent().setModel(oScanningErrorModel, "ScanningErrorData");*/
 		},
 		onSelectDocument: function(oEvent) {
 			try {
 				
-				var row = oEvent.getSource().getParent();
-				var sPath = row.getBindingContext('SapErrorData').getPath();
-				var selectedRecord = row.getBindingContext('SapErrorData').getModel().getProperty(row.getBindingContext('SapErrorData').getPath());
+				//var row = oEvent.getSource().getParent();
+				//var sPath = row.getBindingContext('SapErrorData').getPath();
+				//var selectedRecord = row.getBindingContext('SapErrorData').getModel().getProperty(row.getBindingContext('SapErrorData').getPath());
 				
 				var docId = oEvent.getSource().getProperty('text');
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
@@ -34,7 +24,7 @@ sap.ui.define([
 					docId: docId
 				});
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});

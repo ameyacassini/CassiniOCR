@@ -38,7 +38,7 @@
 										class="error" 
 										type="Transparent" 
 										 text="{i18n>scanningErrors}{=
-											' (' + ${NonSapErrorData>/}.length + ')'
+											' (' + ${ManualVerifyDocuments>/}.length + ')'
 										}" 
 										press="onGoToScanningErrors" />
 									<Button id="btnValidationErrors"

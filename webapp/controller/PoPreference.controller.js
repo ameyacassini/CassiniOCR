@@ -1,11 +1,12 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
 	"../Formatter"
-], function (Controller, MessageBox, Formatter) {
+], function (BaseController, JSONModel, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrors", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrors", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
@@ -19,16 +20,30 @@ sap.ui.define([
 			var approvals = mgrApprovalDataModel.getData();
 			var approval = {};
 			for(var i = 0; i < approvals.length; i++) {
-				if(approvals[i].Uniqueid == oEvent.getParameter("arguments").approvalId){
+				if(approvals[i].Uniqueid === oEvent.getParameter("arguments").approvalId){
 					approval = approvals[i];
 					break;
 				}
 			}
+			
+			
+			
 			approval.balanceAmount = approval.Grossvalue;
 			approval.isValid = false;
 			
 			var approvalModel = new sap.ui.model.json.JSONModel(approval);
 			oView.setModel(approvalModel, "approval");  
+			
+			$.ajax("/ocrspring/ocr/"+ approval.Linkid + "/", {
+				success: function(data) {
+					var lineItemsModel = new JSONModel();
+					lineItemsModel.setData(data);
+					oComponent.setModel(lineItemsModel, "lineItems");
+				},
+				error: function(err) {
+					MessageBox.error(err);
+		    	}
+		   });
 		},
 		onSelectionPO: function(oEvent) {
 			try {
@@ -36,31 +51,8 @@ sap.ui.define([
 				var sPath = oEvent.getParameter("rowContext").getPath();
 				var selectedRecord = oEvent.getParameter("rowContext").getModel().getProperty(sPath);
 				oController._updateBalanceAmount(table, selectedRecord);
-				/*var approval = oView.getModel("approval");
-				
-				var tax = parseFloat(approval.getData().Vat)
-				
-				var rowBinding = table.getBindingInfo("rows");
-				var selectedIndices = table.getSelectedIndices();
-				var totalDiff = 0;
-				for(var i = 0; i < selectedIndices.length; i++) {
-					var item = rowBinding.binding.getModel().getProperty(rowBinding.path + "/" + selectedIndices[i]);
-					totalDiff += (parseFloat(item.PoitemQuantity) * parseFloat(item.Netprice)) + tax;
-				}
-				
-				var balanceAmount = parseFloat(approval.getData().Grossvalue) - totalDiff;
-				if(balanceAmount == 0) {
-					approval.getData().isValid = true;
-				} else {
-					approval.getData().isValid = false;
-				}
-				approval.getData().balanceAmount = balanceAmount;
-				approval.refresh(true);
-				
-				console.log(oEvent);*/
-				
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		onChangePoQuantity: function(oEvent) {
@@ -72,9 +64,7 @@ sap.ui.define([
 				var table = oView.byId("poItemsTbl");
 				var rowBinding = table.getBindingInfo("rows");
 				var selectedIndices = table.getSelectedIndices();
-				
-				
-				
+
 				var isSelected = false;
 				for(var i = 0; i < selectedIndices.length; i++) { 
 					if(sPath === rowBinding.path + "/" + selectedIndices[i]) {
@@ -83,35 +73,10 @@ sap.ui.define([
 					}
 				}
 				if(isSelected) {
-					/*var displayQty = parseFloat(selectedRecord.QtyToDisplay);
-					var qty = parseFloat(selectedRecord.PoitemQuantity);
-					if(qty > displayQty) {
-						MessageBox.error("PO Item Quantity should not be greater than Open PO Quantity");
-					} else {*/
-						oController._updateBalanceAmount(table, selectedRecord);
-					//}
-					
-					
-					/*var approval = oView.getModel("approval");
-					var tax = parseFloat(approval.getData().Vat)
-					var totalDiff = 0;
-					for(var i = 0; i < selectedIndices.length; i++) {
-						var item = rowBinding.binding.getModel().getProperty(rowBinding.path + "/" + selectedIndices[i]);
-						totalDiff += (parseFloat(item.PoitemQuantity) * parseFloat(item.Netprice)) + tax;
-					}
-					
-					var balanceAmount = parseFloat(approval.getData().Grossvalue) - totalDiff;
-					if(balanceAmount == 0) {
-						approval.getData().isValid = true;
-					} else {
-						approval.getData().isValid = false;
-					}
-					approval.getData().balanceAmount = balanceAmount;
-					approval.refresh(true);	*/
+					oController._updateBalanceAmount(table, selectedRecord);
 				}
-				console.log(oEvent);
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		_updateBalanceAmount: function(table, selectedRecord) {
@@ -146,9 +111,23 @@ sap.ui.define([
 					approval.refresh(true);
 				}
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
+		
+		/** 
+		 * 
+		 * @param {Date} date
+		 * @returns
+		 */
+		getResponseDate: function(date) {
+			var month = date.getMonth();
+			if(month < 9)
+				month = "0" + (date.getMonth() + 1);
+			
+			return date.getFullYear() + "-" + month + "-" + date.getDate() + "T00:00:00";
+		},
+		
 		onApprove: function(oEvent) {
 			try {
 				MessageBox.confirm(
@@ -168,13 +147,13 @@ sap.ui.define([
 								
 								var postData = {
 									Servicecall: "MGR",
-									PostingDate: new Date(approvalData.Invoicedate),
+									PostingDate: oController.getResponseDate(new Date(approvalData.Invoicedate)),
 									MgrComment: approvalData.MgrComment,
 									Vat: approvalData.Vat,
 									TaxCode: "",
-									DocumentDate: new Date(),
+									DocumentDate: oController.getResponseDate(new Date()),
 									CalcTax: "",
-									UpdOcrHdrToOcrItm: approvalData.UpdOcrHdrToOcrItm
+									UpdOcrHdrToOcrItm: approvalData.UpdOcrHdrToOcrItm.results
 								};
 								var mainServiceModel = oComponent.getModel("mainServiceModel");
 								mainServiceModel.create("/UpdOcrHdrs", postData, {
@@ -191,9 +170,9 @@ sap.ui.define([
 											}
 										);
 									},
-									error: function() {
+									error: function(oError) {
 										sap.ui.core.BusyIndicator.hide();
-										console.log(oError);
+										MessageBox.error(oError);
 									}
 								});				
 							} else {
@@ -203,7 +182,7 @@ sap.ui.define([
 					});
 			} catch (ex) {
 				sap.ui.core.BusyIndicator.hide();
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});

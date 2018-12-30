@@ -1,15 +1,15 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
 	'../Formatter',
 	'sap/ui/model/json/JSONModel',
 	'sap/viz/ui5/format/ChartFormatter',
 	'sap/viz/ui5/api/env/Format',
 	"sap/m/MessageBox",
 	'../InitPage'
-], function (Controller, Formatter, JSONModel, ChartFormatter, Format, MessageBox, InitPageUtil) {
+], function (BaseController, Formatter, JSONModel, ChartFormatter, Format, MessageBox, InitPageUtil) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.Home", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.Home", {
 		settingsModel : {
             dataset : {
                 name: "Dataset",
@@ -64,8 +64,6 @@ sap.ui.define([
 			}
 			oModel.refresh(true);
 			
-			//var oModel = this.getOwnerComponent().getModel();
-			//var postData = oModel.getData().PostData;
 			var scanningErrorData = oData.PostData.filter(function(data) {
 			    return data.status === 0;
 			});
@@ -108,17 +106,7 @@ sap.ui.define([
             
             InitPageUtil.initPageSettings(this.getView());
             
-            /*var that = this;
-            dataModel.attachRequestCompleted(function() {
-                that.dataSort(this.getData());
-            });*/
-			
-			
-			
-			
-			
-			
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
         	oRouter.getRoute("Home").attachPatternMatched(this._onObjectMatched, this);
 		},
 		
@@ -127,34 +115,8 @@ sap.ui.define([
 		    oComponent.getSapErrorData(oController, ["btnValidationErrors"]);
 		    oComponent.getMgrApprovalData(oController, ["btnDueForApproval"]);
 		    oComponent.getFiReviewRecords(oController, ["tblReadyToPost"]);
-		    oComponent.getCompletedRecords(oController);
-		    
-			// my logic here    
+		    oComponent.getCompletedRecords(oController);    
 		},
-		
-		/*onPost: function(oEvent) {
-			var source = oEvent.getSource();
-			source.setBusy(true);
-			setTimeout(function(){ 
-				var parent = source.getParent().getParent();
-				$("#" + parent.getId() + "-highlight").addClass("posted");
-				source.setBusy(false);
-				$("#" + parent.getId() + "-highlight").one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
-				function(e) {
-			    	var oModel = oComponent.getModel();
-					var postData = oModel.getData().PostData;
-					var postId = source.data("postId");
-					for(var i = 0; i < postData.length; i++) {
-						if(postId === postData[i].postId) {
-							postData.splice(i, 1);
-						}
-					}
-					oModel.refresh(true);
-				}); 
-				
-			}, 3000);
-			
-		},*/
 		
 		onPost: function(oEvent) {
 			try {
@@ -170,24 +132,16 @@ sap.ui.define([
 				var reviewedData = JSON.parse(JSON.stringify(selectedRecord));
 				
 				
-				$.ajax("http://localhost:8090/OcrRestSpring/getTaxRate/"+ reviewedData.VendorCountry + "/" + reviewedData.Companycode + "/", {
+				$.ajax("/ocrspring/getTaxRate/"+ reviewedData.VendorCountry + "/" + reviewedData.Companycode + "/", {
 					success: function(data) {
-						console.log(data);
-						//recordlModel.getData().Taxcode = data.taxCode;
-						//recordlModel.getData().Taxrate = data.taxRate;
-						var tax = (parseFloat(reviewedData.Netvalue) * parseFloat(data.taxRate)) / 100;
-						//recordlModel.getData().Vat = tax;
-						//recordlModel.refresh(true);
-						
-						
-						
+						//var tax = (parseFloat(reviewedData.Netvalue) * parseFloat(data.taxRate)) / 100;
 						reviewedData.UpdOcrHdrToOcrItm = reviewedData.GetOcrHdrToOcrItm;
 				
 						for(var i = 0; i < reviewedData.UpdOcrHdrToOcrItm.results.length; i++) {
 							//reviewedData.UpdOcrHdrToOcrItm.results[i].Message = "";
 							reviewedData.UpdOcrHdrToOcrItm.results[i].FinReviewed = "X";
-							delete reviewedData.UpdOcrHdrToOcrItm.results[i].Paymentindays;
-							delete reviewedData.UpdOcrHdrToOcrItm.results[i].VendorCountry;
+							//delete reviewedData.UpdOcrHdrToOcrItm.results[i].Paymentindays;
+							//delete reviewedData.UpdOcrHdrToOcrItm.results[i].VendorCountry;
 							delete reviewedData.UpdOcrHdrToOcrItm.results[i].__metadata;
 						}
 						
@@ -200,7 +154,7 @@ sap.ui.define([
 							postingMonth = (postingDate.getMonth() + 1).toString();
 						}
 						
-						postingDate = postingDate.getFullYear() + "-" + postingMonth + "-" + postingDate.getDate() + "T00:00:00";
+						//postingDate = postingDate.getFullYear() + "-" + postingMonth + "-" + postingDate.getDate() + "T00:00:00";
 						
 						var documentDate = new Date(reviewedData.Invoicedate);
 					
@@ -211,17 +165,17 @@ sap.ui.define([
 							documentMonth = (documentDate.getMonth() + 1).toString();
 						}
 						
-						documentDate = documentDate.getFullYear() + "-" + documentMonth + "-" + documentDate.getDate() + "T00:00:00";
+						//documentDate = documentDate.getFullYear() + "-" + documentMonth + "-" + documentDate.getDate() + "T00:00:00";
 						
 						var postData = {
 							Servicecall: "FIN",
-							PostingDate: postingDate,
+							PostingDate: postingDate.toJSON().split(".")[0],
 							MgrComment: reviewedData.MgrComment,
 							Vat: reviewedData.Vat.toString(),
-							TaxCode: data.taxCode,
-							DocumentDate: documentDate,
+							TaxCode: (data.taxCode) ? data.taxCode : "",
+							DocumentDate: documentDate.toJSON().split(".")[0],
 							CalcTax: "X",
-							UpdOcrHdrToOcrItm: reviewedData.UpdOcrHdrToOcrItm
+							UpdOcrHdrToOcrItm: reviewedData.UpdOcrHdrToOcrItm.results
 						};
 						
 						var mainServiceModel = oComponent.getModel("mainServiceModel");
@@ -258,16 +212,16 @@ sap.ui.define([
 								);
 							},
 							error: function(oError) {
-								console.log(oError);
+								MessageBox.error(oError);
 							}
 						});
 					},
 					error: function(err) {
-						console.log(err);
+						MessageBox.error(err);
 			    	}
 			   });	
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		

@@ -126,121 +126,174 @@
 			</f:FormContainer>
 		</f:formContainers>
 	</f:Form>
-	<t:Table
-		id="poItemsTbl"
-		class="collapsibl eFooter"
-		rows="{approval>/GetOcrHdrToOcrItm/results}"
-		selectionMode="MultiToggle"
-		rowSelectionChange="onSelectionPO"
-		alternateRowColors="true"
-		visibleRowCount="5"
-		ariaLabelledBy="title">
-		<t:toolbar>
-			<Toolbar>
-				<Title 
-					text="{=
-						'Purchase Orders (' + ${approval>/GetOcrHdrToOcrItm/results}.length + ')'
-					}"></Title>
-				<!--<ToolbarSpacer />
-				<core:HTML afterRendering="onExpandCollapsibleTable" content='&lt;div&gt;&lt;span id=&quot;btnTogglePOPreferenceTable&quot; class=&quot;filter-openCloseWrap&quot;&gt;&lt;span class=&quot;filter-openClose&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;'>
-				</core:HTML>-->
-			</Toolbar>
-		</t:toolbar>
-		<t:columns>
-			<t:Column hAlign="Center"
-				sortProperty="approval>Poitem" 
-				filterProperty="approval>Poitem"
-				width="14%">
-				<Label text="Item"/>
-				<t:template>
-					<Text text="{approval>Poitem}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column hAlign="Center"
-				sortProperty="approval>Netprice" 
-				filterProperty="approval>Netprice"
-				width="14%">
-				<Label text="Net Amount"/>
-				<t:template>
-					<unified:Currency stringValue="{approval>Netprice}" currency="{approval>/Currency}"/>
-					<!--<Text text="{approval>Netprice}" wrapping="false"/>-->
-				</t:template>
-			</t:Column>
-			<t:Column hAlign="Right" width="14%">
-				<Label text="PO Doc. Number"/>
-				<t:template>
-					<Text text="{approval>Ponumber}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column hAlign="Right"
-				width="17%">
-				<Label text="Open PO Qty" />
-				<t:template>
-					<Text text="{approval>QtyToDisplay}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column hAlign="Center" width="17%">
-				<Label text="Qty"/>
-				<t:template>
-					<Input value="{approval>PoitemQuantity}" submit="onChangePoQuantity"/>
-					<!--<Text text="{approval>PoitemQuantity}" wrapping="false"/>-->
-				</t:template>
-			</t:Column>
-			<t:Column hAlign="Center" width="14%">
-				<Label text="Tax Code"/>
-				<t:template>
-					<Text text="{approval>Taxcode}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="17%">
-				<Label text="Material" />
-				<t:template>
-					<Text text="{approval>Material}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="17%">
-				<Label text="UoM" />
-				<t:template>
-					<Text text="{approval>PoitemUom}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="24%">
-				<Label text="Text" />
-				<t:template>
-					<Text text="{approval>PoitemText}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="17%">
-				<Label text="Ref. Doc. Item" />
-				<t:template>
-					<Text text="{approval>RefDocItm}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="17%">
-				<Label text="Ref. Doc. #" />
-				<t:template>
-					<Text text="{approval>RefDocNum}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="10%">
-				<Label text="Year" />
-				<t:template>
-					<Text text="{approval>OcrYear}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-			<t:Column
-				width="17%">
-				<Label text="Description" />
-				<t:template>
-					<Text text="{approval>Description}" wrapping="false"/>
-				</t:template>
-			</t:Column>
-		</t:columns>
-	</t:Table>
+	<IconTabBar
+		id="idIconTabBarInlineMode"
+		headerMode="Inline"
+		upperCase="true"
+		expanded="{device>/isNoPhone}"
+		class="poPreferenceLineItems">
+		<items>
+			<IconTabFilter
+				text="Purchase Orders"
+				count="{= ${approval>/GetOcrHdrToOcrItm/results}.length }">
+				<t:Table
+					id="poItemsTbl"
+					class="collapsibl eFooter"
+					rows="{approval>/GetOcrHdrToOcrItm/results}"
+					selectionMode="MultiToggle"
+					rowSelectionChange="onSelectionPO"
+					alternateRowColors="true"
+					visibleRowCount="5"
+					ariaLabelledBy="title">
+					<!--<t:toolbar>
+						<Toolbar>
+							<Title 
+								text="{=
+									'Purchase Orders (' + ${approval>/GetOcrHdrToOcrItm/results}.length + ')'
+								}"></Title>
+						</Toolbar>
+					</t:toolbar>-->
+					<t:columns>
+						<t:Column hAlign="Center"
+							sortProperty="approval>Poitem" 
+							filterProperty="approval>Poitem"
+							width="14%">
+							<Label text="Item"/>
+							<t:template>
+								<Text text="{approval>Poitem}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Center"
+							sortProperty="approval>Netprice" 
+							filterProperty="approval>Netprice"
+							width="14%">
+							<Label text="Net Amount"/>
+							<t:template>
+								<unified:Currency stringValue="{approval>Netprice}" currency="{approval>/Currency}"/>
+								<!--<Text text="{approval>Netprice}" wrapping="false"/>-->
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Right" width="14%">
+							<Label text="PO Doc. Number"/>
+							<t:template>
+								<Text text="{approval>Ponumber}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Right"
+							width="17%">
+							<Label text="Open PO Qty" />
+							<t:template>
+								<Text text="{approval>QtyToDisplay}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Center" width="17%">
+							<Label text="Qty"/>
+							<t:template>
+								<Input value="{approval>PoitemQuantity}" submit="onChangePoQuantity"/>
+								<!--<Text text="{approval>PoitemQuantity}" wrapping="false"/>-->
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Center" width="14%">
+							<Label text="Tax Code"/>
+							<t:template>
+								<Text text="{approval>Taxcode}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="17%">
+							<Label text="Material" />
+							<t:template>
+								<Text text="{approval>Material}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="17%">
+							<Label text="UoM" />
+							<t:template>
+								<Text text="{approval>PoitemUom}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="24%">
+							<Label text="Text" />
+							<t:template>
+								<Text text="{approval>PoitemText}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="17%">
+							<Label text="Ref. Doc. Item" />
+							<t:template>
+								<Text text="{approval>RefDocItm}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="17%">
+							<Label text="Ref. Doc. #" />
+							<t:template>
+								<Text text="{approval>RefDocNum}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="10%">
+							<Label text="Year" />
+							<t:template>
+								<Text text="{approval>OcrYear}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column
+							width="17%">
+							<Label text="Description" />
+							<t:template>
+								<Text text="{approval>Description}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+					</t:columns>
+				</t:Table>
+			</IconTabFilter>
+			<IconTabFilter
+				text="Line Items"
+				count="{= ${lineItems>/}.length }">
+				<t:Table
+					rows="{lineItems>/}"
+					selectionMode="None"
+					alternateRowColors="true"
+					visibleRowCount="8"
+					ariaLabelledBy="title">
+					<t:columns>
+						<t:Column hAlign="Center"
+							sortProperty="lineItems>description" 
+							filterProperty="lineItems>description">
+							<Label text="Item"/>
+							<t:template>
+								<Text text="{lineItems>description}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Center"
+							sortProperty="lineItems>unitPrice" 
+							filterProperty="lineItems>unitPrice">
+							<Label text="Unit Price"/>
+							<t:template>
+								<unified:Currency stringValue="{lineItems>unitPrice}" currency="EUR"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Right">
+							<Label text="Quantity" />
+							<t:template>
+								<Text text="{lineItems>quantity}" wrapping="false"/>
+							</t:template>
+						</t:Column>
+						<t:Column hAlign="Center"
+							sortProperty="lineItems>lineTotal" 
+							filterProperty="lineItems>lineTotal">
+							<Label text="Line Total"/>
+							<t:template>
+								<unified:Currency stringValue="{lineItems>lineTotal}" currency="EUR"/>
+							</t:template>
+						</t:Column>
+					</t:columns>
+				</t:Table>
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
 </mvc:View>

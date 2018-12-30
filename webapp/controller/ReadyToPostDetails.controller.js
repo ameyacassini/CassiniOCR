@@ -1,11 +1,11 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
 	"sap/m/MessageBox",
 	"../Formatter"
-], function (Controller, MessageBox, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ReadyToPostDetails", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ReadyToPostDetails", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
@@ -35,10 +35,8 @@ sap.ui.define([
 			var recordlModel = new sap.ui.model.json.JSONModel(record);
 			oView.setModel(recordlModel, "record");  
 			
-		$.ajax("http://localhost:8090/OcrRestSpring/getTaxRate/"+ record.VendorCountry + "/" + record.Companycode + "/", {
-		//$.ajax("http://localhost:8090/OcrRestSpring/getTaxRate/US/C001/", {
+		$.ajax("/ocrspring/getTaxRate/"+ record.VendorCountry + "/" + record.Companycode + "/", {
 				success: function(data) {
-					console.log(data);
 					recordlModel.getData().Taxcode = data.taxCode;
 					recordlModel.getData().Taxrate = data.taxRate;
 					var tax = (parseFloat(recordlModel.getData().Netvalue) * parseFloat(data.taxRate)) / 100;
@@ -46,16 +44,15 @@ sap.ui.define([
 					recordlModel.refresh(true);
 				},
 				error: function(err) {
-					console.log(err);
+					MessageBox.error(err);
 		    	}
 		   });
 		},
 		onExpandCollapsibleTable: function(oEvent) {
 			try {
-				this.getView().byId("collapsibleFooter").toggleStyleClass('expanded');
-				
+				//this.getView().byId("collapsibleFooter").toggleStyleClass('expanded');
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		onPost: function(oEvent) {
@@ -68,12 +65,9 @@ sap.ui.define([
 							if(sAction == "OK") {
 								sap.ui.core.BusyIndicator.show(0);
 								var reviewedData = JSON.parse(JSON.stringify(oView.getModel("record").getData()));
-				
-				
 								reviewedData.UpdOcrHdrToOcrItm = reviewedData.GetOcrHdrToOcrItm;
 								
 								for(var i = 0; i < reviewedData.UpdOcrHdrToOcrItm.results.length; i++) {
-									//reviewedData.UpdOcrHdrToOcrItm.results[i].Message = "";
 									reviewedData.UpdOcrHdrToOcrItm.results[i].FinReviewed = "X";
 									delete reviewedData.UpdOcrHdrToOcrItm.results[i].Paymentindays;
 									delete reviewedData.UpdOcrHdrToOcrItm.results[i].VendorCountry;
@@ -104,13 +98,13 @@ sap.ui.define([
 								
 								var postData = {
 									Servicecall: "FIN",
-									PostingDate: postingDate,
+									PostingDate: postingDate.toJSON().split(".")[0],
 									MgrComment: reviewedData.MgrComment,
 									Vat: reviewedData.Vat.toString(),
 									TaxCode: reviewedData.Taxcode,
-									DocumentDate: documentDate,
+									DocumentDate: documentDate.toJSON().split(".")[0],
 									CalcTax: "X",
-									UpdOcrHdrToOcrItm: reviewedData.UpdOcrHdrToOcrItm
+									UpdOcrHdrToOcrItm: reviewedData.UpdOcrHdrToOcrItm.results
 								};
 								
 								var mainServiceModel = oComponent.getModel("mainServiceModel");
@@ -130,7 +124,7 @@ sap.ui.define([
 									},
 									error: function(oError) {
 										sap.ui.core.BusyIndicator.hide();
-										console.log(oError);
+										MessageBox.error(oError);
 									}
 								});				
 							}
@@ -139,7 +133,7 @@ sap.ui.define([
 				
 			} catch (ex) {
 				sap.ui.core.BusyIndicator.hide();
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});

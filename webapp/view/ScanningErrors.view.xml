@@ -22,7 +22,7 @@
 	</OverflowToolbar>
 	<t:Table
 		id="table"
-		rows="{NonSapErrorData>/}"
+		rows="{ManualVerifyDocuments>/}"
 		selectionMode="None"
 		alternateRowColors="true"
 		ariaLabelledBy="title">
@@ -31,41 +31,52 @@
 		</t:rowSettingsTemplate>
 		<t:columns>
 			<t:Column hAlign="Center"
-				sortProperty="NonSapErrorData>scanId" 
-				filterProperty="NonSapErrorData>scanId"
+				sortProperty="ManualVerifyDocuments>DocumentId" 
+				filterProperty="ManualVerifyDocuments>DocumentId"
 				width="20%">
-				<Label text="Scan ID"/>
+				<Label text="Document ID"/>
 				<t:template>
+					<!--<Link
+						class="error"
+						text="{ManualVerifyDocuments>DocumentId}"
+						press="onSelectDocument" />-->
 					<Link
 						class="error"
-						text="{NonSapErrorData>scanId}"
-						press="onSelectDocument" />
+						text="{ManualVerifyDocuments>DocumentId}"
+						target="_blank"
+						href="{= 'http://103.73.151.249/DataVerifier?batchId=' + ${ManualVerifyDocuments>BatchId}}"/>
 				</t:template>
 			</t:Column>
 			<t:Column hAlign="Center" width="20%">
-				<Label text="Vendor Invoice Number"/>
+				<Label text="Batch ID"/>
 				<t:template>
-					<Text text="{NonSapErrorData>invoiceNumber}" wrapping="false"/>
+					<Text text="{ManualVerifyDocuments>BatchId}" wrapping="false"/>
 				</t:template>
 			</t:Column>
 			<t:Column hAlign="Center" width="20%">
-				<Label text="Vendor Number"/>
+				<Label text="Batch Name"/>
 				<t:template>
-					<Text text="{NonSapErrorData>vendorName}" wrapping="false"/>
+					<Text text="{ManualVerifyDocuments>BatchName}" wrapping="false"/>
 				</t:template>
 			</t:Column>
 			<t:Column width="20%" hAlign="Right">
-				<Label text="Gross Amount"/>
+				<Label text="Created On"/>
 				<t:template>
-					<unified:Currency stringValue="{NonSapErrorData>grossValue}" currency="{NonSapErrorData>currency}"/>
+					<Text text="{ManualVerifyDocuments>CreatedOn}" wrapping="false"/>
 				</t:template>
 			</t:Column>
-			<t:Column hAlign="Center" width="20%">
+			<t:Column width="20%" hAlign="Right">
+				<Label text="Updated On"/>
+				<t:template>
+					<Text text="{ManualVerifyDocuments>UpdatedOn}" wrapping="false"/>
+				</t:template>
+			</t:Column>
+			<!--<t:Column hAlign="Center" width="20%">
 				<Label text="Created On"/>
 				<t:template>
 					<Text 
 						text="{
-							path: 'NonSapErrorData>createdTime',
+							path: 'ManualVerifyDocuments>CreatedOn',
 							type: 'sap.ui.model.type.Date',
 							formatOptions: {
 								pattern: 'yyyy/MM/dd'
@@ -73,6 +84,19 @@
 						}" wrapping="false" />
 				</t:template>
 			</t:Column>
+			<t:Column hAlign="Center" width="20%">
+				<Label text="Updated On"/>
+				<t:template>
+					<Text 
+						text="{
+							path: 'ManualVerifyDocuments>UpdatedOn',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: {
+								pattern: 'yyyy/MM/dd'
+							}
+						}" wrapping="false" />
+				</t:template>
+			</t:Column>-->
 		</t:columns>
 	</t:Table>
 </mvc:View>

@@ -558,3 +558,19 @@
 	width: 50%;
 	margin-right: 1rem;
 }
+
+.sapUiMedia-Std-Desktop .ocrCassini .poPreferenceLineItems .sapMITB.sapUiResponsiveContentPadding .sapMITBScrollContainer {
+    margin: 0 1rem;
+}
+
+.ocrCassini .poPreferenceLineItems .sapMITH {
+    background-color: #FAFAFA;
+}
+
+.ocrCassini .poPreferenceLineItems .sapMITBTextOnly .sapMITBText {
+	font-size: 1rem;
+}
+
+.ocrCassini .poPreferenceLineItems .sapMITBContent {
+	padding: 0;
+}

@@ -1,10 +1,11 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
+	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrors", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrors", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
@@ -24,9 +25,9 @@ sap.ui.define([
 		onSelectDocument: function(oEvent) {
 			try {
 				
-				var row = oEvent.getSource().getParent();
-				var sPath = row.getBindingContext('NonSapErrorData').getPath();
-				var selectedRecord = row.getBindingContext('NonSapErrorData').getModel().getProperty(row.getBindingContext('NonSapErrorData').getPath());
+				//var row = oEvent.getSource().getParent();
+				//var sPath = row.getBindingContext('NonSapErrorData').getPath();
+				//var selectedRecord = row.getBindingContext('NonSapErrorData').getModel().getProperty(row.getBindingContext('NonSapErrorData').getPath());
 				
 				
 				var scanId = oEvent.getSource().getProperty('text');
@@ -35,7 +36,7 @@ sap.ui.define([
 					scanId: scanId
 				});
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});

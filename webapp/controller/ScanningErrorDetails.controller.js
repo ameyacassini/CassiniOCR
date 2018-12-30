@@ -1,11 +1,11 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
 	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, MessageBox, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrorDetails", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ScanningErrorDetails", {
 		onInit: function() {
 			oController = this;
 			oView = this.getView();
@@ -59,11 +59,7 @@ sap.ui.define([
 									date = dt.getDate().toString();
 								}
 								
-								//var date = dt.getDate();
-								
 								errorData.invoiceDate = year + "-" + month + "-" + date + "T00:00:00.000Z";
-								
-								//errorData.invoiceDate = new Date(errorData.invoiceDate);
 								
 								var createdTime = errorData.createdTime;
 								var createdYear = createdTime.getFullYear();
@@ -79,8 +75,6 @@ sap.ui.define([
 								} else {
 									createdDate = createdTime.getDate().toString();
 								}
-								
-								//createdDate = createdTime.getDate();
 								
 								errorData.createdTime = createdYear + "-" + createdMonth + "-" + createdDate + "T00:00:00.000Z";
 								
@@ -100,9 +94,6 @@ sap.ui.define([
 									updatedDate = updatedTime.getDate().toString();
 								}
 								
-								
-								//var updatedDate = updatedTime.getDate();
-								
 								errorData.updatedTime = updatedYear + "-" + updatedMonth + "-" + updatedDate + "T00:00:00.000Z";
 								errorData.errorMessage = "";
 								errorData.status = "SUCCESS";
@@ -113,7 +104,7 @@ sap.ui.define([
 									headers: { 
 								        'Content-Type': 'application/json' 
 								    },
-									url: "http://localhost:8090/OcrRestSpring/updateInvoiceData/",
+									url: "/ocrspring/updateInvoiceData/",
 									data: postData,
 									dataType: "json",
 									success: function(data, response) {
@@ -130,7 +121,7 @@ sap.ui.define([
 										);
 									},
 									error: function(err, response) {
-										console.log(err);
+										MessageBox.error(err);
 										sap.ui.core.BusyIndicator.hide();
 										if(err.responseText === "SUCCESS") {
 											MessageBox.success(
@@ -153,7 +144,7 @@ sap.ui.define([
 				
 				
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 				sap.ui.core.BusyIndicator.hide();
 			}
 		}

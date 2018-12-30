@@ -1,22 +1,12 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
 	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, MessageBox, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
 	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.ValidationErrorDetails", {
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.ValidationErrorDetails", {
 		onInit: function() {
-			/*var oModel = this.getOwnerComponent().getModel();
-			var postData = oModel.getData().PostData;
-			var scanningErrorData = postData.filter(function(data) {
-			    return data.status === 0;
-			});
-			
-			var oScanningErrorModel = new sap.ui.model.json.JSONModel({
-				PostData: scanningErrorData
-			});
-			this.getOwnerComponent().setModel(oScanningErrorModel, "ScanningErrorData");*/
 			oController = this;
 			oView = this.getView();
 			oComponent = this.getOwnerComponent();
@@ -42,28 +32,24 @@ sap.ui.define([
 				filePath: errorData.Filepath
 			});
 			oView.byId("invoiceFileImg").setBusy(true);
-			//sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
 				type: 'POST',
 				headers: { 
 			        'Content-Type': 'application/json' 
 			    },
-				url: "http://localhost:8090/OcrRestSpring/getInvoiceFile/",
+				url: "/ocrspring/getInvoiceFile/",
 				data: postData,
 				dataType: "json",
-				success: function(data) { 
-					console.log(data);
+				success: function(data) {
 					oView.byId("invoiceFileImg").setBusy(false);
-					//sap.ui.core.BusyIndicator.hide();
 				},
 				error: function(err) {
-					console.log(err);
+					MessageBox.error(err);
 					if(err.status === 200) {
 						errorModel.getData().invoiceFile = err.responseText;
 						oView.byId("invoiceFileImg").setBusy(false);
 						errorModel.refresh(true);
 					}
-					//sap.ui.core.BusyIndicator.hide();
 				}
 			});
 		},
@@ -76,11 +62,11 @@ sap.ui.define([
 				for(var i = 0; i < vendorNoDataModel.getData().length; i++) {
 					if(vendorNoDataModel.getData()[i].vendorName === errorModel.getData().Vendorname 
 						&& vendorNoDataModel.getData()[i].pincode === errorModel.getData().Postalcode) {
-							errorModel.getData().Vendorno = vendorNoDataModel.getData()[i].vendorNo;
-							errorModel.refresh(true);
-							vendorNoExist = true;
-							break;
-						}
+						errorModel.getData().Vendorno = vendorNoDataModel.getData()[i].vendorNo;
+						errorModel.refresh(true);
+						vendorNoExist = true;
+						break;
+					}
 				}
 				
 				if(!vendorNoExist) {
@@ -88,7 +74,7 @@ sap.ui.define([
 					errorModel.refresh(true);
 				}
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		},
 		
@@ -150,9 +136,9 @@ sap.ui.define([
 											}
 										);
 									},
-									error: function() {
+									error: function(oError) {
 										sap.ui.core.BusyIndicator.hide();
-										console.log(oError);
+										MessageBox.error(oError);
 									}
 								});				
 							} else {
@@ -162,7 +148,7 @@ sap.ui.define([
 					});
 				
 			} catch (ex) {
-				MessageBox.error("Error catch");
+				MessageBox.error(ex);
 			}
 		}
 	});

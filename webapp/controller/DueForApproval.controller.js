@@ -1,29 +1,31 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"demo/cassini/ocr/CassiniOCR/controller/BaseController",
+	"sap/m/MessageBox",
 	'../Formatter'
-], function (Controller, Formatter) {
+], function (BaseController, MessageBox, Formatter) {
 	"use strict";
-	var oView, oController, oComponent;
-	return Controller.extend("demo.cassini.ocr.CassiniOCR.controller.DueForApproval", {
+	//var oView, oController, oComponent;
+	//var oController;
+	return BaseController.extend("demo.cassini.ocr.CassiniOCR.controller.DueForApproval", {
 		onInit: function() {
-			oController = this;
-			oView = this.getView();
-			oComponent = this.getOwnerComponent();
+			//oController = this;
+			//oView = this.getView();
+			//oComponent = this.getOwnerComponent();
 		},
 		onSelectDocument: function(oEvent) {
 			try {
-				var row = oEvent.getSource().getParent();
-				var sPath = row.getBindingContext('MgrApprovalData').getPath();
-				var selectedRecord = row.getBindingContext('MgrApprovalData').getModel().getProperty(row.getBindingContext('MgrApprovalData').getPath());
+				//var row = oEvent.getSource().getParent();
+				//var sPath = row.getBindingContext('MgrApprovalData').getPath();
+				//var selectedRecord = row.getBindingContext('MgrApprovalData').getModel().getProperty(row.getBindingContext('MgrApprovalData').getPath());
 				
 				
 				var approvalId = oEvent.getSource().getProperty('text');
-				var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this.getView());
 				oRouter.navTo("PoPreference", {
 					approvalId: approvalId
 				});
 			} catch (ex) {
-				console.log(ex);
+				MessageBox.error(ex);
 			}
 		}
 	});
